@@ -35,6 +35,7 @@ class UserBiography(models.Model):
 
 
 class UserTransaction(models.Model):
+    account_user = models.ForeignKey(AccountUser, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=20, null=True, blank=True)
     transaction_type = models.CharField(max_length=10)
     transaction_date = models.DateTimeField(auto_now=True)

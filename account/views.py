@@ -1,6 +1,6 @@
 import uuid
 from uuid import UUID
-
+import datetime
 from django.http import JsonResponse
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
@@ -90,3 +90,41 @@ class UserTransactionCreateView(generics.CreateAPIView):
             )
 
         return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_all_transactions_by_account_number(self, account_number):
+    try:
+        query = list(UserTransaction.objects.filter(account_user__account_number=account_number).values())
+        return Response({
+            "status": "success",
+            "data": query
+        })
+    except:
+        return Response({"message": "Wrong account number entered"})
+
+
+def get_transactions_by_month(account_number, month):
+    queryset = list(UserTransaction.objects.filter(transaction_date__month=month,
+                                                   account_user__account_number=account_number).values())
+    return queryset
+
+
+@api_view(['GET'])
+def get_transaction_range_for_an_account(self, account_number, month_range):
+
+    now = datetime.datetime.now()
+    starting_month = now.month
+    all_transactions = []
+
+    for month in range(month_range):
+        actual_month = starting_month - month
+        transactions = {
+            "transactions": get_transactions_by_month(account_number, actual_month)
+        }
+
+        all_transactions.append(transactions)
+    return Response({
+        "status": "success",
+        "data": all_transactions
+    })
