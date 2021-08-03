@@ -1,10 +1,13 @@
+import uuid
+from uuid import UUID
+
 from django.http import JsonResponse
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import random
-from .models import AccountUser, UserBiography
-from .serializer import AccountUserSerializer, GetAccountSerializer, UserBiographySerializer
+from .models import AccountUser, UserBiography, UserTransaction
+from .serializer import AccountUserSerializer, GetAccountSerializer, UserBiographySerializer, UserTransactionSerializer
 
 
 class AccountUserCreateView(generics.CreateAPIView):
@@ -68,3 +71,22 @@ def get_customer_balance_by_account_number(self, account_number):
         return Response({"Customer account balance": serializer.data['account_balance']}, status=status.HTTP_200_OK)
     except:
         return Response({"message": "Wrong account number. Please check and try again"})
+
+
+class UserTransactionCreateView(generics.CreateAPIView):
+    queryset = UserTransaction.objects.all()
+    serializer_class = UserTransactionSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response({"message": "Something went wrong. Please try later"}, status=status.HTTP_400_BAD_REQUEST)
+
+        txn_id = "5fd132s" + str(uuid.uuid4().hex[:7])
+
+        if serializer.is_valid:
+            serializer.save(
+                transaction_id=txn_id
+            )
+
+        return Response(serializer.data)

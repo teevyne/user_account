@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AccountUser, UserBiography
+from .models import AccountUser, UserBiography, UserTransaction
 
 
 class AccountUserSerializer(serializers.ModelSerializer):
@@ -17,4 +17,10 @@ class GetAccountSerializer(serializers.ModelSerializer):
 class UserBiographySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBiography
+        fields = '__all__'
+
+
+class UserTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTransaction
         fields = '__all__'

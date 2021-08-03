@@ -27,7 +27,19 @@ class UserBiography(models.Model):
     phone_number = models.CharField(max_length=11)
     image = models.CharField(max_length=50)
     account_balance = models.FloatField()
+    bvn = models.CharField(max_length=12)
     house_address = models.CharField(max_length=100)
 
     def __str__(self):
         return self.first_name
+
+
+class UserTransaction(models.Model):
+    transaction_id = models.CharField(max_length=20, null=True, blank=True)
+    transaction_type = models.CharField(max_length=10)
+    transaction_date = models.DateTimeField(auto_now=True)
+    amount = models.FloatField()
+    category = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.transaction_id
